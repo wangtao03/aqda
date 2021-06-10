@@ -86,33 +86,33 @@
           <br>
           <div v-if="education == '专科' || education == '本科'" id="collegeInfo">
             <div class="input-group">
-              <span class="input-group-addon">毕业院校:</span>
+              <span class="input-group-addon"><span class="text-danger">*</span>毕业院校:</span>
               <input type="text" class="form-control" placeholder="请输入毕业院校" v-model="college">
             </div>
             <br>
             <div class="input-group">
-              <span class="input-group-addon">所学专业:</span>
+              <span class="input-group-addon"><span class="text-danger">*</span>所学专业:</span>
               <input type="text" class="form-control" placeholder="请输入所学专业" v-model="specialitie">
             </div>
             <br>
           </div>
           <div class="input-group">
-            <span class="input-group-addon">参加工作时间:</span>
+            <span class="input-group-addon"><span class="text-danger">*</span>参加工作时间:</span>
             <input type="date" class="form-control" placeholder="请输入参加工作时间" v-model="participation">
           </div>
           <br>
           <div class="input-group">
-            <span class="input-group-addon">进保卫部时间:</span>
+            <span class="input-group-addon"><span class="text-danger">*</span>进保卫部时间:</span>
             <input type="date" class="form-control" placeholder="请输入进入本单位时间" v-model="into">
           </div>
           <br>
           <div class="input-group">
-            <span class="input-group-addon">入职所在部门:</span>
+            <span class="input-group-addon"><span class="text-danger">*</span>入职所在部门:</span>
             <input type="text" class="form-control" placeholder="例: 保卫部" v-model="department">
           </div>
           <br>
           <div class="input-group">
-            <span class="input-group-addon">主要工作经历:</span>
+            <span class="input-group-addon"><span class="text-danger">*</span>主要工作经历:</span>
             <textarea rows="8" class="form-control" placeholder="从开始工作至今的经历&#10;例: 2015.04至今 唐钢保卫部"
               v-model="experience"></textarea>
           </div>
@@ -155,11 +155,15 @@
       },
       methods: {
         query: function () {
+          if (this.code.length != 18) {
+            alert("身份证号码错误!");
+            return;
+          }
           Bmob.initialize("a8ed8f0519ef553d", "^oEQjE");
           const query = Bmob.Query('anda');
           query.equalTo("code", "==", this.code);
           query.find().then(res => {
-            if (res !== undefined) {
+            if (res[0] !== undefined) {
               this.objid = res[0].objectId;
               this.code = res[0].code;
               this.name = res[0].name;
@@ -180,6 +184,29 @@
           });
         },
         update: function () {
+          if (this.education == "本科" || this.education == "专科") {
+            if (this.college == "" || this.specialitie == "") {
+              alert("毕业学校和专业不能为空");
+              return;
+            }
+          }
+          if (this.participation == "") {
+            alert("参加工作时间不能为空");
+            return;
+          }
+          if (this.into == "") {
+            alert("进入保卫部时间不能为空");
+            return;
+          }
+          if (this.department == "") {
+            alert("入职时所在部门不能为空");
+            return;
+          }
+          if (this.experience == "") {
+            alert("工作经历不能为空");
+            return;
+          }
+
           Bmob.initialize("a8ed8f0519ef553d", "^oEQjE");
           const query = Bmob.Query('anda');
           query.get(this.objid).then(res => {
@@ -230,5 +257,4 @@
     })
   </script>
 </body>
-
 </html>
